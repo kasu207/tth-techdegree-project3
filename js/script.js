@@ -51,24 +51,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Register Activities
     //trigger function if inputs are trigered
     const checkboxes = document.querySelectorAll('.activities input');
-    document.querySelector('.activities').addEventListener('change', (e) => {
+    const activities = document.querySelector('.activities');
+    activities.addEventListener('change', (e) => {
         const clicked = e.target;
         const clickedType = clicked.getAttribute("data-day-and-time");
+        const cost = clicked.getAttribute("data-cost");
+        //calculate Value for conference
+
+        const value = document.createElement('p');
+        const costs = [];
+
         for (let i = 0; i < checkboxes.length; i++) {
             const checkboxType = checkboxes[i].getAttribute("data-day-and-time");
             if (clickedType == checkboxType && clicked !== checkboxes[i]) {
-                if(clicked.checked){
+                if (clicked.checked) {
                     //checkboxes[i].checked = true;
                     checkboxes[i].disabled = true;
-                }else{
+                    
+                } else {
                     checkboxes[i].disabled = false;
                 };
-            }
+            }else if(clicked.checked){
+                costs.push(costs);
+            };
         };
+        console.log(costs);
+        value.textContent = cost;
+        activities.appendChild(value);
     });
 
-    //calculate Value for Workshop
-    const value = document.createElement('p');
+
 
 
 
