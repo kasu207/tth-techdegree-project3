@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     colorOption.selected = true;
     //color.insertBefore(colorOption, color.firstChild);
     color.add(colorOption, 0);
-
     const design = document.querySelector('#design');
     design.addEventListener('change', () => {
         for (let i = 0; i < color.length; i++) {
@@ -52,15 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
     //trigger function if inputs are trigered
     const checkboxes = document.querySelectorAll('.activities input');
     const activities = document.querySelector('.activities');
+    const value = document.createElement('p');
     activities.addEventListener('change', (e) => {
         const clicked = e.target;
         const clickedType = clicked.getAttribute("data-day-and-time");
-        const cost = clicked.getAttribute("data-cost");
+       
         //calculate Value for conference
-
-        const value = document.createElement('p');
         const costs = [];
-
         for (let i = 0; i < checkboxes.length; i++) {
             const checkboxType = checkboxes[i].getAttribute("data-day-and-time");
             if (clickedType == checkboxType && clicked !== checkboxes[i]) {
@@ -71,18 +68,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     checkboxes[i].disabled = false;
                 };
-            }else if(clicked.checked){
-                costs.push(costs);
+            }else if(checkboxes[i].checked){
+                costs.push(checkboxes[i].getAttribute("data-cost"));
             };
         };
-        console.log(costs);
-        value.textContent = cost;
-        activities.appendChild(value);
+        let sum = 0;
+        for (let i = 0; i < costs.length; i ++){
+            sum = sum + parseInt(costs[i]);
+        }
+        value.textContent = sum;
+        value.className = 'value';
+        if ( value.textContent === '0' ) {
+            value.style.display = 'none';
+        }else{
+            value.style.display = '';
+            activities.appendChild(value);
+        }
+        
     });
-
-
-
-
-
-
+    
 });
