@@ -1,16 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    const firstInput = document.querySelector('#name');
-    firstInput.autofocus = true;
+    //Constants
+    //Input Check
+    const name = document.querySelector('#name');
 
     const selectTitle = document.querySelector('#title');
     const inputOtherRole = document.createElement('input');
+    //Color Selection
+    const design = document.querySelector('#design');
+    const color = document.querySelector('#color');
+    const divColor = document.querySelector('#colors-js-puns');
+    //Activities
+    const checkboxes = document.querySelectorAll('.activities input');
+    const activities = document.querySelector('.activities');
+    //Payment
+    const paymentOption = document.querySelector('#payment');
+    const divCard = document.querySelector('#credit-card');
+    const divPaypal = document.querySelector('#paypal');
+    const divBitcoin = document.querySelector('#bitcoin');
+
+    //Validation
+    const mail = document.querySelector('#mail');
+    const ccNum = document.querySelector('#cc-num');
+    const zipCode = document.querySelector('#zip');
+    const cvv = document.querySelector('#cvv');
+
+    //Submit
+    const submitButton = document.querySelector('button');
+
+    //Autofocus - Name Field
+    name.focus();
+
+    //Role
     selectTitle.parentNode.insertBefore(inputOtherRole, selectTitle.nextSibling);
     inputOtherRole.style.display = 'none';
     selectTitle.addEventListener('change', () => {
         if (selectTitle.value === 'other') {
             inputOtherRole.type = 'text';
-            inputOtherRole.autofocus = true;
+            //inputOtherRole.autofocus = true;
             inputOtherRole.id = 'otherRole';
             inputOtherRole.style.display = '';
         } else if (selectTitle !== 'other') {
@@ -18,10 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const design = document.querySelector('#design');
-    const color = document.querySelector('#color');
-    const divColor = document.querySelector('#colors-js-puns');
-
+    //Color Selectoin
     const colorOption = document.createElement('option');
     colorOption.textContent = 'Please select a T-shirt theme';
     colorOption.value = 'plsSelectShirt';
@@ -69,8 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Register Activities
     //trigger function if inputs are trigered
-    const checkboxes = document.querySelectorAll('.activities input');
-    const activities = document.querySelector('.activities');
+
     const value = document.createElement('p');
     activities.appendChild(value);
     activities.addEventListener('change', (e) => {
@@ -109,10 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     //Payment Info Section
-    const paymentOption = document.querySelector('#payment');
-    const divCard = document.querySelector('#credit-card');
-    const divPaypal = document.querySelector('#paypal');
-    const divBitcoin = document.querySelector('#bitcoin');
     for (let i = 0; i < paymentOption.length; i++) {
         if (paymentOption[i].value == 'credit card') {
             paymentOption[i].selected = true;
@@ -140,10 +158,55 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
     //Form Validation
-    const validation = () => {
-
+    //constants
+    /*
+     * Name
+     * Email
+     * Activities 
+     * Payment
+     */
+    function nameVal(name) {
+        if (name.value.length == 0){
+            return false;
+        }else{
+            return true;
+        }
+        //return /^\s*$/.test(name);
     };
-    validation();
 
+    function mailVal(mail) {
+        return /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail.value);
+    };
+
+    function activitiesVal() {
+        let chcked = [];
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                chcked += 1;
+            }
+        }
+        if (chcked.length == 0){
+            return false;
+        } else {
+            return true;
+        }
+    };
+
+    function cardVal() {
+        if ((/^(\d{13}|\d{16})$/.test(ccNum.value))  && (/^\d{5}$/.test(zipCode.value)) && (/^\d{3}$/.test(cvv.value))) {
+            return true;
+        }else{
+            return false;
+        };
+    };
+    submitButton.addEventListener('click', (e) => {
+        if (!nameVal(name) || !mailVal(mail) || !activitiesVal(activities) || !cardVal()){
+            console.log('no submit');
+            e.preventDefault();
+        }else{
+            console.log('submit');
+        }
+    });
 });
