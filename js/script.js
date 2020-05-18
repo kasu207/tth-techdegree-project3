@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = document.querySelector('#name');
     //Input Roles
     const selectTitle = document.querySelector('#title');
-    const inputOtherRole = document.createElement('input');
+    const inputOtherRole = document.querySelector('#otherVal');
     //Color Selection
     const design = document.querySelector('#design');
     const color = document.querySelector('#color');
@@ -27,15 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
     //Submit
     const submitButton = document.querySelector('button');
 
-    /*
-    Tasks
-    */
+    //Error
+    const error = document.createElement('small');
 
+    /* Tasks*/
     //Autofocus - Name Field
     name.focus();
 
     //Role
-    selectTitle.parentNode.insertBefore(inputOtherRole, selectTitle.nextSibling);
+
     inputOtherRole.style.display = 'none';
     selectTitle.addEventListener('change', () => {
         if (selectTitle.value === 'other') {
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 chcked += 1;
             }
         }
-        if (chcked.length == 0){
+        if (chcked.length == 0) {
             return false;
         } else {
             return true;
@@ -199,41 +199,41 @@ document.addEventListener('DOMContentLoaded', () => {
     * checks activities
     * checks credit card details
     */
-    function checkInputs(){
+    function checkInputs() {
         //check with the input values
         const nameVal = name.value;
         const emailVal = mail.value;
 
-        if(nameVal === ''){
+        if (nameVal === '') {
             setErrorFor(name, 'Name cannot be blank - please insert a username')
         }
-        if(emailVal === ''){
+        if (emailVal === '') {
             setErrorFor(mail, 'Email cannot be blank');
         } else if (!mailVal(mail)) {
             setErrorFor(mail, 'Email is not valid');
         }
 
-        if(!activitiesVal(activities)){
+        if (!activitiesVal(activities)) {
             setErrorFor(activities, 'At least one actitvity must be selected')
         }
 
-        if(!(/^(\d{13}|\d{16})$/.test(ccNum.value))){
+        if (!(/^(\d{13}|\d{16})$/.test(ccNum.value))) {
             setErrorFor(ccNum, 'Please insert correct card details!')
         }
-        if(!(/^\d{5}$/.test(zipCode.value))){
+        if (!(/^\d{5}$/.test(zipCode.value))) {
             setErrorFor(zipCode, 'It seems that your zip Code is not in the right format!');
         }
-        if(!(/^\d{3}$/.test(cvv.value))){
-            setErrorFor(cvv,'It seems that your CVV is not in the right format!');
+        if (!(/^\d{3}$/.test(cvv.value))) {
+            setErrorFor(cvv, 'It seems that your CVV is not in the right format!');
         }
     }
     /*Set Error Function
-    * Goal: make input field with error visible
-    * Inputs:
-    ** input: Element where the error happend
-    ** message: Display error message regarding to the field 
-    */
-    function setErrorFor(input, message){
+     * Goal: make input field with error visible
+     * Inputs:
+     ** input: Element where the error happend
+     ** message: Display error message regarding to the field 
+     */
+    function setErrorFor(input, message) {
         //Error Message
         const small = document.createElement('small');
         //input.focus();
@@ -243,22 +243,23 @@ document.addEventListener('DOMContentLoaded', () => {
         small.textContent = message;
         small.style.color = "crimson";
     }
-    
-    function createListener(validator) {
-        return e => {
-          const text = e.target.value;
-          const valid = validator(text);
-          const showTip = text !== "" && !valid;
-          const tooltip = e.target.nextElementSibling;
-          showOrHideTip(showTip, tooltip);
-        };
-      }
-      
+    //Exceed for Real-Time Validation on Mail
+    mail.addEventListener('input', () => {
+        mail.parentNode.insertBefore(error, mail.nextSibling);
+        error.textContent = 'Email is not valid';
+        error.style.color = "crimson";
+        error.style.display = "none";
+        mail.style.border = "2px crimson solid";
+        mail.style.marginBottom = '5px';
+        if(!mailVal(mail)){
+            error.style.display = '';
+        }
+    })
 
     submitButton.addEventListener('click', (e) => {
         e.preventDefault();
         checkInputs();
     })
-   
+
 
 });
