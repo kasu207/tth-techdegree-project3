@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //Constants
     //Input Check
     const name = document.querySelector('#name');
-
+    //Input Roles
     const selectTitle = document.querySelector('#title');
     const inputOtherRole = document.createElement('input');
     //Color Selection
@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     //Submit
     const submitButton = document.querySelector('button');
 
+    /*
+    Tasks
+    */
+
     //Autofocus - Name Field
     name.focus();
 
@@ -44,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    //Color Selectoin
+    //Color Selection
     const colorOption = document.createElement('option');
     colorOption.textContent = 'Please select a T-shirt theme';
     colorOption.value = 'plsSelectShirt';
@@ -162,20 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
     //Form Validation
     //constants
     /*
-     * Name
-     * Email
-     * Activities 
-     * Payment
-     */
-    function nameVal(name) {
-        if (name.value.length == 0){
-            return false;
-        }else{
-            return true;
-        }
-        //return /^\s*$/.test(name);
-    };
+     * Email 
+     ** Checks if mail input field hast the correct input
+     ** takes the mail element as input
 
+     * Activities 
+     ** checks, if at least one activitiy is chossen
+     *+ takes the .activity class as input
+
+     */
     function mailVal(mail) {
         return /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail.value);
     };
@@ -193,20 +192,73 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         }
     };
+    /*
+    Function to check the input if the needed input fiels
+    * checks name
+    * checks mail
+    * checks activities
+    * checks credit card details
+    */
+    function checkInputs(){
+        //check with the input values
+        const nameVal = name.value;
+        const emailVal = mail.value;
 
-    function cardVal() {
-        if ((/^(\d{13}|\d{16})$/.test(ccNum.value))  && (/^\d{5}$/.test(zipCode.value)) && (/^\d{3}$/.test(cvv.value))) {
-            return true;
-        }else{
-            return false;
-        };
-    };
-    submitButton.addEventListener('click', (e) => {
-        if (!nameVal(name) || !mailVal(mail) || !activitiesVal(activities) || !cardVal()){
-            console.log('no submit');
-            e.preventDefault();
-        }else{
-            console.log('submit');
+        if(nameVal === ''){
+            setErrorFor(name, 'Name cannot be blank - please insert a username')
         }
-    });
+        if(emailVal === ''){
+            setErrorFor(mail, 'Email cannot be blank');
+        } else if (!mailVal(mail)) {
+            setErrorFor(mail, 'Email is not valid');
+        }
+
+        if(!activitiesVal(activities)){
+            setErrorFor(activities, 'At least one actitvity must be selected')
+        }
+
+        if(!(/^(\d{13}|\d{16})$/.test(ccNum.value))){
+            setErrorFor(ccNum, 'Please insert correct card details!')
+        }
+        if(!(/^\d{5}$/.test(zipCode.value))){
+            setErrorFor(zipCode, 'It seems that your zip Code is not in the right format!');
+        }
+        if(!(/^\d{3}$/.test(cvv.value))){
+            setErrorFor(cvv,'It seems that your CVV is not in the right format!');
+        }
+    }
+    /*Set Error Function
+    * Goal: make input field with error visible
+    * Inputs:
+    ** input: Element where the error happend
+    ** message: Display error message regarding to the field 
+    */
+    function setErrorFor(input, message){
+        //Error Message
+        const small = document.createElement('small');
+        //input.focus();
+        input.style.border = "2px crimson solid";
+        input.parentNode.insertBefore(small, input.nextSibling);
+        input.style.marginBottom = '5px';
+        small.textContent = message;
+        small.style.color = "crimson";
+    }
+    
+    function createListener(validator) {
+        return e => {
+          const text = e.target.value;
+          const valid = validator(text);
+          const showTip = text !== "" && !valid;
+          const tooltip = e.target.nextElementSibling;
+          showOrHideTip(showTip, tooltip);
+        };
+      }
+      
+
+    submitButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        checkInputs();
+    })
+   
+
 });
