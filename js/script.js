@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Submit
     const submitButton = document.querySelector('button');
-
+    const form = document.querySelector('form');
     //Error
     const error = document.createElement('small');
 
@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     name.focus();
 
     //Role
-
     inputOtherRole.style.display = 'none';
     selectTitle.addEventListener('change', () => {
         if (selectTitle.value === 'other') {
@@ -66,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < color.length; i++) {
         color[i].style.display = 'none';
     };
+
+    //Tshirt Selection
     design.addEventListener('change', () => {
         for (let i = 0; i < color.length; i++) {
             color[i].style.display = 'none';
@@ -96,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Register Activities
     //trigger function if inputs are trigered
-
     const value = document.createElement('p');
     activities.appendChild(value);
     activities.addEventListener('change', (e) => {
@@ -161,19 +161,34 @@ document.addEventListener('DOMContentLoaded', () => {
             divPaypal.style.display = 'none';
         }
     });
-
-
     //Form Validation
-    //constants
+    //Add Error Messages to every Field
+    //Name
+    const errName = document.createElement('small');
+    name.parentNode.insertBefore(errName, name.nextSibling);
+    //Mail
+    const errMail = document.createElement('small');
+    mail.parentNode.insertBefore(errMail, mail.nextSibling);
+    //Activity
+    const errActi = document.createElement('small');
+    activities.parentNode.insertBefore(errActi, activities.nextSibling);
+    //Credit Card
+    //Card
+    const errCard = document.createElement('small');
+    ccNum.parentNode.insertBefore(errCard, ccNum.nextSibling);
+    //zip
+    const errZip = document.createElement('small');
+    zipCode.parentNode.insertBefore(errZip, zipCode.nextSibling);
+    //cvv
+    const errCVV = document.createElement('small');
+    cvv.parentNode.insertBefore(errCVV, cvv.nextSibling);
     /*
      * Email 
      ** Checks if mail input field hast the correct input
      ** takes the mail element as input
-
      * Activities 
      ** checks, if at least one activitiy is chossen
      *+ takes the .activity class as input
-
      */
     function mailVal(mail) {
         return /^[^@]+@[^@.]+\.[a-z]+$/i.test(mail.value);
@@ -197,35 +212,55 @@ document.addEventListener('DOMContentLoaded', () => {
     * checks name
     * checks mail
     * checks activities
-    * checks credit card details
+    * checks credit card details if creditcard is selected
     */
     function checkInputs() {
         //check with the input values
         const nameVal = name.value;
         const emailVal = mail.value;
-
+        let errors = [];
         if (nameVal === '') {
+            errors += 1;
             setErrorFor(name, 'Name cannot be blank - please insert a username')
+        } else {
+            setSuccessFor(name);
         }
-        if (emailVal === '') {
-            setErrorFor(mail, 'Email cannot be blank');
-        } else if (!mailVal(mail)) {
+        if (emailVal === '' || !mailVal(mail)) {
             setErrorFor(mail, 'Email is not valid');
+            errors += 1;
+        } else {
+            setSuccessFor(mail);
         }
 
         if (!activitiesVal(activities)) {
+            errors += 1;
             setErrorFor(activities, 'At least one actitvity must be selected')
+        } else {
+            setSuccessFor(activities);
         }
-
-        if (!(/^(\d{13}|\d{16})$/.test(ccNum.value))) {
-            setErrorFor(ccNum, 'Please insert correct card details!')
+        if (paymentOption[1].selected) {
+            if (!(/^(\d{13}|\d{16})$/.test(ccNum.value))) {
+                errors += 1;
+                setErrorFor(ccNum, 'Please insert correct card details!')
+            } else {
+                setSuccessFor(ccNum);
+            }
+            if (!(/^\d{5}$/.test(zipCode.value))) {
+                errors += 1;
+                setErrorFor(zipCode, 'It seems that your zip Code is not in the right format!');
+            } else {
+                setSuccessFor(zipCode);
+            }
+            if (!(/^\d{3}$/.test(cvv.value))) {
+                errors += 1;
+                setErrorFor(cvv, 'It seems that your CVV is not in the right format!');
+            } else {
+                setSuccessFor(cvv);
+            }
         }
-        if (!(/^\d{5}$/.test(zipCode.value))) {
-            setErrorFor(zipCode, 'It seems that your zip Code is not in the right format!');
-        }
-        if (!(/^\d{3}$/.test(cvv.value))) {
-            setErrorFor(cvv, 'It seems that your CVV is not in the right format!');
-        }
+        if(errors.length === 0){
+            form.submit();
+        };
     }
     /*Set Error Function
      * Goal: make input field with error visible
@@ -233,33 +268,38 @@ document.addEventListener('DOMContentLoaded', () => {
      ** input: Element where the error happend
      ** message: Display error message regarding to the field 
      */
+    //Error Message
     function setErrorFor(input, message) {
-        //Error Message
-        const small = document.createElement('small');
+        //input Parent
+        const small = input.nextElementSibling;
         //input.focus();
         input.style.border = "2px crimson solid";
-        input.parentNode.insertBefore(small, input.nextSibling);
+        //input.parentNode.insertBefore(small, input.nextSibling);
         input.style.marginBottom = '5px';
         small.textContent = message;
         small.style.color = "crimson";
+        small.style.display = '';
     }
+
+    function setSuccessFor(input) {
+        input.style.border = "2px #3CB371 solid";
+        const small = input.nextElementSibling;
+        small.style.display = 'none';
+    }
+
     //Exceed for Real-Time Validation on Mail
-    mail.addEventListener('input', () => {
-        mail.parentNode.insertBefore(error, mail.nextSibling);
-        error.textContent = 'Email is not valid';
-        error.style.color = "crimson";
-        error.style.display = "none";
-        mail.style.border = "2px crimson solid";
-        mail.style.marginBottom = '5px';
-        if(!mailVal(mail)){
-            error.style.display = '';
+    mail.addEventListener('keyup', () => {
+        if (!mailVal(mail) || mail.value === '') {
+            setErrorFor(mail, 'Email ist not valid!')
+        }else{
+            setSuccessFor(mail);
         }
     })
 
     submitButton.addEventListener('click', (e) => {
         e.preventDefault();
-        checkInputs();
-    })
+        checkInputs();   
+    });
 
 
 });
